@@ -13,8 +13,10 @@ using System.Security;
 
 namespace WorldCities.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
+    //[Route("api/[controller]")]
+    //[ApiController]
     public class SeedController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -36,6 +38,20 @@ namespace WorldCities.Controllers
             var path = Path.Combine(_env.ContentRootPath, "Data/Source/worldcities.xlsx");
 
             using var stream = System.IO.File.OpenRead(path);
+
+            //// If you are a commercial business and have
+            //// purchased commercial licenses use the static property
+            //// LicenseContext of the ExcelPackage class:
+            //ExcelPackage.LicenseContext = LicenseContext.Commercial;
+
+            // If you use EPPlus in a noncommercial context
+            // according to the Polyform Noncommercial license:
+            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+            //using (var package = new ExcelPackage(new FileInfo("MyWorkbook.xlsx")))
+            //{
+
+            //}
 
             using var excelPackage = new ExcelPackage(stream);
 
@@ -151,3 +167,6 @@ namespace WorldCities.Controllers
         }
     }
 }
+
+
+//https://epplussoftware.com/developers/licenseexception
