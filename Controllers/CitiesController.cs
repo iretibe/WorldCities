@@ -22,11 +22,53 @@ namespace WorldCities.Controllers
         }
 
         // GET: api/Cities
+        // GET: api/Cities/?pageIndex=0&pageSize=10
+        // GET: api/Cities/0/10
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<City>>> GetCities()
+        //[Route("{pageIndex?}/{pageSize?}")]
+        public async Task<ActionResult<ApiResult<City>>> GetCities(int pageIndex = 0, int pageSize = 10,
+            string sortColumn = null, string sortOrder = null, string filterColumn = null, string filterQuery = null)
         {
-            return await _context.Cities.ToListAsync();
+            return await ApiResult<City>
+                .CreateAsync(_context.Cities, pageIndex, pageSize, sortColumn, sortOrder, filterColumn, filterQuery);
         }
+
+        //// GET: api/Cities
+        //// GET: api/Cities/?pageIndex=0&pageSize=10
+        //// GET: api/Cities/0/10
+        //[HttpGet]
+        ////[Route("{pageIndex?}/{pageSize?}")]
+        //public async Task<ActionResult<ApiResult<City>>> GetCities(int pageIndex = 0, int pageSize = 10, 
+        //    string sortColumn = null, string sortOrder = null, string filterColumn = null, string filterQuery = null)
+        //{
+        //    //We first perform the filtering...
+        //    var cities = _context.Cities;
+
+        //    if (!string.IsNullOrEmpty(filterColumn) && !string.IsNullOrEmpty(filterQuery))
+        //    {
+        //        cities = (DbSet<City>)cities.Where(c => c.Name.Contains(filterQuery));
+        //    }
+
+        //    // ... and then we call the ApiResult
+        //    return await ApiResult<City>.CreateAsync(cities, pageIndex, pageSize, sortColumn, sortOrder);
+        //}
+
+        //// GET: api/Cities
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<City>>> GetCities(int pageIndex = 0, int pageSize = 10)
+        //{
+        //    return await _context.Cities
+        //        .Skip(pageIndex * pageSize)
+        //        .Take(pageSize)
+        //        .ToListAsync();
+        //}
+
+        //// GET: api/Cities
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<City>>> GetCities()
+        //{
+        //    return await _context.Cities.ToListAsync();
+        //}
 
         // GET: api/Cities/5
         [HttpGet("{id}")]
