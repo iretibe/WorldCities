@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WorldCities.Data;
@@ -80,6 +77,17 @@ namespace WorldCities.Controllers
                 return NotFound();
             }
             return city;
+        }
+
+        [HttpPost] 
+        [Route("IsDupeCity")] 
+        public bool IsDupeCity(City city) 
+        { 
+            return _context.Cities.Any(e => e.Name == city.Name 
+                && e.Lat == city.Lat 
+                && e.Lon == city.Lon 
+                && e.CountryId == city.CountryId 
+                && e.Id != city.Id); 
         }
 
         // PUT: api/Cities/5
