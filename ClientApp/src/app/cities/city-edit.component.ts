@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 
 import { City } from './City';
 import { Country } from './../countries/Country';
+import { BaseFormComponent } from '../base.form.component';
 
 @Component({
   selector: 'app-city-edit',
@@ -14,7 +15,7 @@ import { Country } from './../countries/Country';
   styleUrls: ['./city-edit.component.css']
 })
 
-export class CityEditComponent implements OnInit {
+export class CityEditComponent extends BaseFormComponent implements OnInit {
   //The view title
   title: string;
 
@@ -37,13 +38,25 @@ export class CityEditComponent implements OnInit {
     private http: HttpClient,
     @Inject('BASE_URL') private baseUrl: string)
   {
+    super();
   }
 
   ngOnInit() {
     this.form = new FormGroup({
       name: new FormControl('', Validators.required),
-      lat: new FormControl('', Validators.required),
-      lon: new FormControl('', Validators.required),
+
+      lat: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[-]?[0-9]+(\.[0-9]{1,4})?$/)
+      ]),
+
+      lon: new FormControl('', [
+        Validators.required,
+        Validators.pattern(/^[-]?[0-9]+(\.[0-9]{1,4})?$/)
+      ]),
+
+      //lat: new FormControl('', Validators.required),
+      //lon: new FormControl('', Validators.required),
       countryId: new FormControl('', Validators.required)
     }, null, this.isDupeCity());
     this.loadData();
@@ -143,101 +156,28 @@ export class CityEditComponent implements OnInit {
     }
   }
 
-  //loadData() {
-  //  //Retrieve the ID from the 'id'
-  //  this.id = +this.activatedRoute.snapshot.paramMap.get('id');
+  //Retrieve a FormControl
+  getControl(name: string) {
+    return this.form.get(name);
+  }
 
-  //  if (this.id) {
-  //    //Fetch the city from the server
-  //    var url = this.baseUrl + "api/Cities/" + this.id;
+  //Returns TRUE if the FormControl is valid
+  isValid(name: string) {
+    var e = this.getControl(name);
+    return e && e.valid;
+  }
 
-  //    this.http.get<City>(url).subscribe(result => {
-  //      this.city = result;
-  //      this.title = "Edit - " + this.city.name;
+  //Returns TRUE if the FormControl has been changed
+  isChanged(name: string) {
+    var e = this.getControl(name);
+    return e && (e.dirty || e.touched);
+  }
 
-  //      //Update the form with the city value
-  //      this.form.patchValue(this.city);
+  //Returns TRUE if the FormControl is raising an error,
+  //i.e. an invalid state after user changes
+  hasError(name: string) {
+    var e = this.getControl(name);
+    return e && (e.dirty || e.touched) && e.invalid;
+  }
 
-  //    }, error => console.error(error));
-  //  }
-  //  else {
-  //    // ADD NEW MODE
-  //    this.title = "Create a new City";
-  //  }
-  //}
-
-  //onSubmit() {
-  //  var city = (this.id) ? this.city : <City>{};
-
-  //  var city = this.city;
-
-  //  city.name = this.form.get("name").value;
-  //  city.lat = +this.form.get("lat").value;
-  //  city.lon = +this.form.get("lon").value;
-
-  //  if (this.id) {
-  //    //Update a city
-  //    var url = this.baseUrl + "api/Cities/" + this.city.id;
-
-  //    this.http
-  //      .put<City>(url, city)
-  //      .subscribe(result => {
-  //        console.log("City " + city.id + " has been updated.");
-
-  //        // go back to cities view
-  //        this.router.navigate(['/cities']);
-
-  //      }, error => console.error(error));
-  //  }
-  //  else {
-  //    //Add new city
-  //    var url = this.baseUrl + "api/Cities";
-
-  //    this.http
-  //      .post<City>(url, city)
-  //      .subscribe(result => {
-  //        console.log("City " + result.id + " has been created.");
-
-  //        // go back to cities view
-  //        this.router.navigate(['/cities']);
-  //      }, error => console.error(error));
-  //  }
-  //}
-
-  //loadData() {
-  //  // retrieve the ID from the 'id' parameter
-  //  var id = +this.activatedRoute.snapshot.paramMap.get('id');
-
-  //  // fetch the city from the server
-  //  var url = this.baseUrl + "api/Cities/" + id;
-
-  //  this.http.get<City>(url).subscribe(result => {
-  //    this.city = result;
-  //    this.title = "Edit - " + this.city.name;
-
-  //    // update the form with the city value
-  //    this.form.patchValue(this.city);
-
-  //  }, error => console.error(error));
-  //}
-
-  //onSubmit() {
-  //  var city = this.city;
-
-  //  city.name = this.form.get("name").value;
-  //  city.lat = +this.form.get("lat").value;
-  //  city.lon = +this.form.get("lon").value;
-
-  //  var url = this.baseUrl + "api/Cities/" + this.city.id;
-
-  //  this.http
-  //    .put<City>(url, city)
-  //    .subscribe(result => {
-  //      console.log("City " + city.id + " has been updated.");
-
-  //      // go back to cities view
-  //      this.router.navigate(['/cities']);
-
-  //    }, error => console.error(error));
-  //}
 }

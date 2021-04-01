@@ -44,6 +44,7 @@
   <ItemGroup>
     <None Remove="ClientApp\src\app\angular-material.module.ts" />
     <None Remove="ClientApp\src\app\app-routing-module.ts" />
+    <None Remove="ClientApp\src\app\base.form.component.ts" />
     <None Remove="ClientApp\src\app\cities\cities.component.ts" />
     <None Remove="ClientApp\src\app\cities\city-edit.component.ts" />
     <None Remove="ClientApp\src\app\cities\city.ts" />
