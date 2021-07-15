@@ -1,0 +1,542 @@
+﻿UserSecret can be found here: %APPDATA%\Microsoft\UserSecrets
+
+https://docs.microsoft.com/en-us/aspnet/core/security/app-secrets?view=aspnetcore-5.0&tabs=windows
+* Enable secret storage
+1- dotnet user-secrets init
+2- <PropertyGroup>
+	  <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <UserSecretsId>79a3edd0-2092-40a2-a04d-dcb46d5ca9ed</UserSecretsId>
+	</PropertyGroup>
+
+
+* Set a secret
+1- dotnet user-secrets set "Movies:ServiceApiKey" "12345"
+2- dotnet user-secrets set "Movies:ServiceApiKey" "12345" --project "C:\apps\WebApp1\src\WebApp1"
+
+
+The two web applications that we have created so far feature front-end to back-end communication over 
+the HTTP(S) protocol, and in order to establish such communication, we made good use of the 
+HttpClient class, a built-in Angular HTTP API client shipped with the @angular/common/http package 
+that rests on the XMLHttpRequest interface.
+
+
+Angular's HttpClient class has a lot of benefits, including testability features, request and response 
+typed objects, request and response interception, Observable APIs, and streamlined error handling. 
+It can even be used without a data server thanks to the in-memory web API package, which emulates 
+CRUD operations over a RESTful API.
+
+
+Angular's HttpClient class is based on XMLHttpRequest (XHR), an API consisting of an object 
+that is provided by the browser through its JavaScript engine, which can be used to transfer data 
+between a web browser and a web server in an asynchronous way, and without having to reload the whole page.
+
+
+he Fetch API is another interface for fetching resources that aims to be a modern alternative to 
+the XMLHttpRequest API, providing a more powerful and flexible feature set.
+
+
+All in all, both the JavaScript-native Fetch API and the Angular-native HttpClient class are perfectly viable and either of them can be effectively used in an Angular app.
+
+Here are the major advantages of using Fetch:
+
+    a- It's the newest industry standard that can be used to handle HTTP requests and responses.
+    b- It's JavaScript-native; therefore, it can be used not only on Angular, but also on any other JavaScript-based front-end framework (such as React, Vue, and so on).
+    c- It simplifies working with service workers, as the Request and Response objects are the same as the ones we are using in our normal code.
+    d- It's built around the norm that HTTP requests have single return values, thus returning a Promise instead of a stream-like type, like the Observer is (this can be an advantage in most scenarios, but it can also become a disadvantage).
+
+And here are the most relevant advantages of using HttpClient:
+
+    a- It's Angular-native, and therefore widely supported and constantly updated by the framework (and will most likely be in the future as well).
+    b- It allows easy mixing and matching of multiple Observables.
+    c- Its abstraction level allows us to easily implement some HTTP magic (such as defining auto-retry attempts in case of request failures).
+    d- Observers are arguably more versatile and feature-rich than Promises, which can be useful in some complex scenarios, such as performing sequencing calls, being able to cancel HTTP requests after they have been sent, and so on.
+    e- It can be injected, and therefore used to write unit tests for various scenarios.
+
+
+Let's briefly review each one of the preceding abstract methods:
+
+    a- getData<ApiResult>(): This is meant to replace our current implementation for the getData() methods 
+        in our CitiesComponent and CountriesComponent TypeScript files to retrieve, respectively, 
+        the cities and countries lists. 
+        As we can see, we took the chance to specify a new strongly typed interface 
+        – ApiResult – which will be populated with the structured JSON output that we already receive 
+        from the GetCities and GetCountries ASP.NET Core web APIs.
+    b- get<T>(): This will replace our current implementation for the loadData() methods of our 
+        CityEditComponent and CountryEditComponent TypeScript files.
+    c- put<T>() and post<T>(): These will replace our current implementations for the submit() methods 
+        of our CityEditComponent and CountryEditComponent TypeScript files.
+
+
+"If debugging is the process of removing software bugs, then programming must be the process of putting them in."
+
+
+The first thing we must do is add the following NuGet packages to our project:
+    Serilog.AspNetCore
+    Serilog.Settings.Configuration
+    Serilog.Sinks.MSSqlServer
+
+
+Here are the pipes that come built-in with Angular:
+    DatePipe
+    UpperCasePipe
+    LowerCasePipe
+    CurrencyPipe
+    PercentPipe
+    JsonPipe
+
+
+Observables are a great way to monitor our client-side app's behavior: once we subscribe to them, 
+we can be sure that our event handlers will be called every time a new value is emitted
+
+
+In a nutshell, here's what we've done:
+    * We've added a destroySubject internal variable of type Subject, a special type of Observable 
+        which we introduced in Chapter 7, Code Tweaks and Data Services, that allows values to be 
+        multi-casted to many observers.
+    * We've piped the takeUntil() operator to all our observable chains; the operator will register 
+        destroySubject as a notifier, meaning that it will emit the values emitted by the source observable 
+        until destroySubject emits a value.
+    * We've implemented the ngOnDestroy life cycle hook where our notifier emits a value 
+        (thus stopping all the subscriptions) and then unsubscribes itself.
+
+
+Unit testing is the name given to a method of software testing that helps to determine 
+whether the isolated modules of a program (units) are working correctly.
+
+
+More precisely, we'll learn how to define, implement, and perform the following:
+    Back-end unit tests in ASP.NET Core, using the xUnit.net testing tool.
+    Front-end unit tests in Angular, using the Jasmine testing framework and the Karma test runner that we briefly saw in Chapter 2, Looking Around.
+
+
+We'll also get the opportunity to briefly introduce some widely used testing practices 
+that can help us to get the most out of our tests, such as Test-Driven Development (TDD) 
+and Behavior-Driven Development (BDD). By the end of this chapter, we'll have learned how 
+to properly design and implement back-end and front-end unit tests following these practices.
+
+
+In this chapter, we're going to need all of the technical requirements listed in previous chapters, 
+with the following additional packages:
+    a- Microsoft.NET.Test.Sdk
+    b- xunit
+    c- xunit.runner.visualstudio
+    d- Moq
+    e- Microsoft.EntityFrameworkCore.InMemory
+
+
+ASP.NET Core unit tests
+In this section, we'll learn how to build an ASP.NET Core unit test project using xUnit.net, 
+a free, open-source, community-focused unit testing tool for .NET created by Brad Wilson, 
+who also developed NUnit v2. 
+We've chosen this tool because it's arguably one of the most powerful and easy-to-use unit testing 
+tools available today. 
+
+
+Moq is arguably the most popular and friendly mocking framework for .NET. 
+To better understand why we need it, we need to introduce the concept of mocking.
+
+
+Mocking is a convenient feature that we can use in unit testing whenever the unit that we want 
+to test has external dependencies that cannot be easily created within the testing project. 
+The main purpose of a mocking framework is to create replacement objects that simulate the behavior 
+of the real ones. Moq is a minimalistic framework that will do just that.
+
+
+Microsoft.EntityFrameworkCore.InMemory is an in-memory database provider for Entity Framework Core 
+that can be used for testing purposes. This is basically the same concept as the Angular in-memory 
+Web API that we talked about.
+
+
+TDD and BDD are two development practices that enforce a different coding approach when compared 
+to Standard Testing Development (STD). We'll talk more about these soon enough
+
+
+------------------------------------------------
+The Arrange phase is the place where we define the assets required to run the test. 
+In our scenario, since we're going to test the functionality of the GetCity() method of CitiesController, 
+we need to provide our controller with a suitable ApplicationDbContext.
+
+However, since we're not testing ApplicationDbContext itself, instantiating the real thing wouldn't be 
+advisable, at least for now. We don't want our test to fail just because the database is unavailable, 
+or the database connection is incorrect, because these are different units and therefore should be 
+checked by different unit tests. Moreover, we definitely can't allow our unit tests to operate against 
+our actual data source: what if we want to test an update or a delete task?
+
+The best thing we can do to test our Web API controllers is to find a way to provide them with a 
+replacement object that can behave just like our real ApplicationDbContext; in other words, a mock.
+
+
+------------------------------------------------
+The Act phase is where the test takes place. It often consists of a single instruction that corresponds 
+to the behavior of the unit that we want to check.
+
+
+------------------------------------------------
+The purpose of the Assert phase is to verify that the conditions that we expect are properly met by 
+the values retrieved by the Act phase. To do this, we'll make use of the Assert class provided by xUnit, 
+which contains various static methods that can be used to verify that these conditions are met.
+
+
+------------------------------------------------
+Executing the test
+
+Each unit test can be executed in two ways:
+
+    From the command line, using the .NET CLI
+    From the Visual Studio GUI, using Visual Studio's built-in test runner (Test Explorer)
+
+Let's quickly try both of these approaches.
+Using the CLI
+
+To execute our test unit(s) by using the .NET CLI, perform the following steps:
+
+    Open Command Prompt
+    Navigate to the WorldCities.Tests project root folder
+    Execute the following command:
+
+    > dotnet test
+
+
+------------------------------------------------
+TDD is more of a programming practice than a testing approach, and it can be a very good practice, 
+at least for certain scenarios.
+
+
+TDD is mostly a way of designing the code that requires developers to start writing test cases 
+that express what they intend the code to do before writing any actual code (RED). Once done, 
+it asks them to only write the code required to make the test cases pass (GREEN). Eventually, 
+when all of the test cases pass, the existing code can be improved (REFACTOR), until more test cases 
+appear. This short development cycle is conventionally called RED-GREEN-REFACTOR and is the backbone 
+of the TDD practice. It's worth noting that RED is always the initial step of any cycle since the tests 
+will always fail at the start because the code that could allow them to pass is yet to be written.
+
+
+------------------------------------------------
+Angular unit tests
+    a- Jasmine: A JavaScript testing framework that fully supports the BDD approach that we talked 
+    about earlier.
+    b- Karma: A tool that lets us spawn browsers and run our Jasmine tests inside them (and show 
+    their results) from the command line
+    c- Protractor: An end-to-end test framework that runs tests against Angular applications from 
+    within a real browser, interacting with it as if it were a real user.
+
+
+Testing with Jasmine
+Jasmine tests are usually constructed using the following three main APIs:
+    a- describe(): A wrapping context used to create a group of tests (also called a test suite)
+    b- it(): The declaration of a single test
+    c- expect(): The expected result of a test
+
+
+------------------------------------------------
+Generally speaking, the term authentication refers to any process of verification that someone, 
+be it a human being or an automated system, is who (or what) they claim to be.
+
+
+Authentication should never be confused with authorization, as this is a different process and is in 
+charge of a very different task. 
+To give a quick definition, we can say that the purpose of authorization is to confirm that the requesting 
+user is allowed to have access to the action they want to perform. In other words, while authentication 
+is about who they are, authorization is about what they're allowed to do.
+
+
+Authentication and authorization will be the main topics of this chapter, 
+which we'll try to address from both theoretical and practical points of view. 
+More precisely, we're going to do the following:
+    1- Discuss some typical scenarios where authentication and authorization could either be required 
+        or not.
+    2- Introduce ASP.NET Core Identity, a modern membership system that allows developers to add login 
+        functionality to their applications, as well as IdentityServer, middleware designed to add 
+        OpenID Connect and OAuth 2.0 endpoints to any ASP.NET Core application.
+    3- Implement ASP.NET Core Identity and IdentityServer to add login and registration functionalities 
+        to our existing WorldCities app.
+    4- Explore the Angular authorization API provided by the .NET Core and Angular Visual Studio project 
+        template, which implements the oidc-client npm package to interact with the URI endpoints provided 
+        by the ASP.NET Core Identity system, as well as some key Angular features, such as route guards 
+        and HTTP interceptors, to handle the whole authorization flow.
+    5- Integrate the aforementioned back-end and front-end APIs into our WorldCities project in order 
+        to give our users a satisfying authentication and authentication experience.
+    6- Implement an email sending service, so that our app will be able to properly authenticate 
+        registered users using a typical email confirmation flow.
+
+
+------------------------------------------------
+Third-party authentication
+
+Being forced to have a potentially different username and password for each website visit can be frustrating, as well as requiring users to develop custom password storage techniques that might lead to security risks. In order to overcome this issue, a large number of IT developers started to look around for an alternative way to authenticate users that could replace the standard authentication technique based on usernames and passwords with an authentication protocol based on trusted third-party providers.
+The rise and fall of OpenID
+
+Among the first successful attempts to implement a third-party authentication mechanism was the first release of OpenID, an open and decentralized authentication protocol promoted by the non-profit OpenID Foundation. Available since 2005, it was quickly and enthusiastically adopted by some big players such as Google and Stack Overflow, who originally based their authentication providers on it.
+
+Here's how it works in a few words:
+    1- Whenever our application receives an OpenID authentication request, it opens a transparent 
+        connection interface through the requesting user and a trusted third-party authentication 
+        provider (for example, the Google identity provider); 
+        the interface can be a popup, an AJAX-populated modal window, or an API call, depending on 
+        the implementation.
+    2- The user sends their username and password to the aforementioned third-party provider, 
+        who performs the authentication accordingly and communicates the result to our application 
+        by redirecting the user to where they came from, along with a security token that can be used 
+        to retrieve the authentication result.
+    3- Our application consumes the token to check the authentication result, authenticating the user 
+        in the event of success or sending an error response in the event of failure.
+
+
+------------------------------------------------
+OpenID Connect
+
+In a desperate attempt to keep their flag flying after the takeover of the OAuth/OAuth 2 social logins, 
+the OpenID Foundation released the third generation of the OpenID technology in February 2014; 
+this was called OpenID Connect (OIDC).
+
+Despite the name, the new installment has little to nothing to do with its ancestor; 
+it's merely an authentication layer built upon the OAuth 2 authorization protocol. 
+In other words, it's little more than a standardized interface to help developers use OAuth 2 as 
+an authentication framework in a less improper way, which is kind of funny, considering that OAuth 2 
+played a major role in taking out OpenID 2.0 in the first place.
+
+The choice of giving up on OpenID in favor of OIDC was highly criticized in 2014; 
+however, after all these years, we can definitely say that OIDC can still provide a useful, 
+standardized way to obtain user identities. It allows developers to request and receive information 
+about authenticated users and sessions using a convenient, RESTful-based JSON interface; 
+it features an extensible specification that also supports some promising optional features such as 
+encryption of identity data, auto-discovery of OpenID providers, and even session management. 
+In short, it's still useful enough to be used instead of relying on pure OAuth 2.
+
+
+------------------------------------------------
+Authorization
+In most standard implementations, including those featured by ASP.NET, the authorization phase kicks 
+in right after authentication, and it's mostly based on permissions or roles; any authenticated user 
+might have their own set of permissions and/or belong to one or more roles and thus be granted access 
+to a specific set of resources. These role-based checks are usually set by the developer in a declarative 
+fashion within the application source code and/or configuration files.
+
+Authorization, as we said, shouldn't be confused with authentication, despite the fact that it can be 
+easily exploited to perform an implicit authentication as well, especially when it's delegated to a 
+third-party actor.
+
+
+Third-party authorization
+The best-known third-party authorization protocol nowadays is the 2.0 release of OAuth, 
+also known as OAuth 2, which supersedes the former release (OAuth 1, or simply OAuth) originally 
+developed by Blaine Cook and Chris Messina in 2006.
+
+We have already talked a lot about it for good reason: OAuth 2 has quickly become the industry-standard 
+protocol for authorization and is currently used by a gigantic number of community-based websites and 
+social networks, including Google, Facebook, and Twitter. It basically works like this:
+    1- Whenever an existing user requests a set of permissions to our application via OAuth, 
+        we open a transparent connection interface between them and a third-party authorization 
+        provider that is trusted by our application (for example, Facebook)
+    2- The provider acknowledges the user and, if they have the proper rights, responds by entrusting 
+        them with a temporary, specific access key
+    3- The user presents the access key to our application and will be granted access
+
+We can clearly see how easy it is to exploit this authorization logic for authentication purposes as well; 
+after all, if Facebook says I can do something, shouldn't it also imply that I am who I claim to be? 
+Isn't that enough?
+
+The short answer is no. It might be the case for Facebook because their OAuth 2 implementation implies 
+that subscribers receiving the authorization must have authenticated themselves to Facebook first; 
+however, this assurance is not written anywhere. Considering how many websites are using it for 
+authentication purposes, we can assume that Facebook won't likely change their actual behavior, 
+yet we have no guarantees of this.
+
+Theoretically speaking, these websites can split their authorization system from their authentication 
+protocol at any time, thus leading our application's authentication logic to an unrecoverable state of 
+inconsistency. More generally, we can say that presuming something from something else is almost always 
+a bad practice, unless that assumption lies upon very solid, well-documented, and (most importantly) 
+highly guaranteed grounds.
+
+------------------------------------------------
+ASP.NET Core provides a unified framework to manage and store user accounts that can be easily used 
+in any .NET Core application (even non-web ones); this framework is called ASP.NET Core Identity 
+and provides a set of APIs that allows developers to handle the following tasks:
+    1- Design, set up, and implement user registration and login functionalities
+    2- Manage users, passwords, profile data, roles, claims, tokens, email confirmation, and so on
+    3- Support external (third-party) login providers such as Facebook, Google, Microsoft account, 
+        Twitter, and more
+
+------------------------------------------------
+Entity types
+The ASP.NET Core Identity platform strongly relies upon the following entity types, each one of them 
+representing a specific set of records:
+    1- User: The users of our application
+    2- Role: The roles that we can assign to each user
+    3- UserClaim: The claims that a user possesses
+    4- UserToken: The authentication token that a user might use to perform auth-based tasks 
+        (such as logging in)
+    5- UserLogin: The login account associated with each user
+    6- RoleClaim: The claims that are granted to all users within a given role
+    7- UserRole: The lookup table to store the relationship between users and their assigned roles
+
+These entity types are related to each other in the following ways:
+    1- Each User can have many UserClaim, UserLogin, and UserToken entities (one-to-many)
+    2- Each Role can have many associated RoleClaim entities (one-to-many)
+    3- Each User can have many associated Role entities, and each Role can be associated with many 
+        User entities (many-to-many)
+
+The many-to-many relationship requires a join table in the database, which is represented by the UserRole 
+entity.
+
+------------------------------------------------
+Luckily enough, we won't have to manually implement all these entities from scratch, because ASP.NET 
+Core Identity provides some default Common Language Runtime (CLR) types for each one of them:
+    1- IdentityUser
+    2- IdentityRole
+    3- IdentityUserClaim
+    4- IdentityUserToken
+    5- IdentityUserLogin
+    6- IdentityRoleClaim
+    7- IdentityUserRole
+
+------------------------------------------------
+These types can be used as base classes for our own implementation, whenever we need to explicitly 
+define an identity-related entity model; moreover, most of them don't have to be implemented in most 
+common authentication scenarios, since their functionalities can be handled at a higher level thanks 
+to the ASP.NET Core Identity sets of APIs, which can be accessed from the following classes:
+    1- RoleManager<TRole>: Provides the APIs for managing roles
+    2- SignInManager<TUser>: Provides the APIs for signing users in and out (login and logout)
+    3- UserManager<TUser>: Provides the APIs for managing users
+
+Once the ASP.NET Core Identity service has been properly configured and set up, these providers can be 
+injected into our .NET controllers using Dependency Injection (DI), just like we did with 
+ApplicationDbContext; in the following section, we'll see how we can do that.
+
+Install-Package Microsoft.AspNetCore.Identity.EntityFrameworkCore
+Install-Package Microsoft.AspNetCore.ApiAuthorization.IdentityServer
+
+dotnet ef migrations add "Identity" -o "Data/Migrations"
+dotnet ef database update
+
+------------------------------------------------
+
+Authentication methods
+Now that we have updated our database to support the ASP.NET Core Identity authentication workflow 
+and patterns, we should spend some valuable time choosing which authentication method to adopt; 
+more precisely, since we've already implemented the .NET Core IdentityServer, to properly understand 
+whether the default authentication method that it provides for SPAs—JWTs—is safe enough to use or whether 
+we should change it to a more secure mechanism.
+
+As we most certainly know, the HTTP protocol is stateless, meaning that whatever we do during a 
+request/response cycle will be lost before the subsequent request, including the authentication result. 
+The only way we have to overcome this is to store that result somewhere, along with all its relevant data, 
+such as user ID, login date/time, and last request time.
+
+------------------------------------------------
+
+Sessions
+Since a few years ago, the most common and traditional method to do this was to store that data on 
+the server using either a memory-based, disk-based, or external session manager. 
+Each session can be retrieved using a unique ID that the client receives with the authentication response, 
+usually inside a session cookie, which will be transmitted to the server on each subsequent request.
+
+This is still a very common technique used by most web applications. There's nothing wrong with adopting this approach, as long as we are okay with its widely acknowledged downsides, such as the following:
+
+    1- Memory issues: Whenever there are many authenticated users, the web server will consume more 
+        and more memory. Even if we use a file-based or external session provider, there will nonetheless 
+        be an intensive I/O, TCP, or socket overhead.
+    2- Scalability issues: Replicating a session provider in a scalable architecture (IIS web farm, 
+        load-balanced cluster, and the like) might not be an easy task and will often lead to bottlenecks 
+        or wasted resources.
+    3- Cross-domain issues: Session cookies behave just like standard cookies, so they cannot be easily 
+        shared between different origins/domains. These kinds of problems can often be solved with some 
+        workarounds, yet they will often lead to insecure scenarios to make things work.
+    4- Security issues: There is a wide range of detailed literature on security-related issues involving 
+        sessions and session cookies: for instance, Cross-Site Request Forgery (CSRF) attacks, and a 
+        number of other threats that won't be covered here for the sake of simplicity. 
+        Most of them can be mitigated by some countermeasures, yet they can be difficult to handle for 
+        junior or novice developers.
+
+As these issues have arisen over the years, there's no doubt that most analysts and developers have put 
+a lot of effort into figuring out different approaches, as well as mitigating them.
+
+------------------------------------------------
+
+Tokens
+Token-based authentication has been increasingly adopted by Single-Page Applications (SPAs) and 
+mobile apps in the last few years for a number of undeniably good reasons that we'll try to briefly 
+summarize here.
+
+The most important difference between session-based authentication and token-based authentication 
+is that the latter is stateless, meaning that we won't be storing any user-specific information on 
+the server memory, database, session provider, or other data containers of any sort.
+
+This single aspect solves most of the downsides that we pointed out earlier for session-based 
+authentication. We won't have sessions, so there won't be an increasing overhead; we won't need 
+a session provider, so scaling will be much easier. Also, for browsers supporting LocalStorage, 
+we won't even be using cookies, so we won't get blocked by cross-origin restrictive policies and, 
+hopefully, we'll get around most security issues.
+
+In terms of client-server interaction, these steps don't seem much different from the session-based 
+authentication flow diagram; apparently, the only difference is that we'll be issuing and checking 
+tokens instead of creating and retrieving sessions. The real deal is happening (or not happening) 
+at the server side. We can immediately see that the token-based auth flow does not rely on a stateful 
+session-state server, service, or manager. This will easily translate into a considerable boost 
+in terms of performance and scalability.
+
+------------------------------------------------
+
+Signatures
+This is a method used by most modern API-based cloud-computing and storage services, including 
+Amazon Web Services (AWS). In contrast to session-based and token-based approaches, which rely on 
+a transport layer that can theoretically be accessed by or exposed to a third-party attacker, 
+signature-based authentication performs a hash of the whole request using a previously shared private key. 
+This ensures that no intruder or man-in-the-middle can ever act as the requesting user, as they won't be 
+able to sign the request.
+
+------------------------------------------------
+
+Two-factor
+This is the standard authentication method used by most banking and financial accounts, being arguably 
+the most secure one.
+
+The implementation may vary, but it always relies on the following base workflow:
+    1- The user performs a standard login with a username and password.
+    2- The server identifies the user and prompts them with an additional, user-specific request that 
+        can only be satisfied by something obtained or obtainable through a different channel: 
+        an OTP password sent by SMS, a unique authentication card with a number of answer codes, 
+        a dynamic PIN generated by a proprietary device or a mobile app, and so on.
+    3- If the user gives the correct answer, they are authenticated using a standard session-based 
+        or token-based method.
+
+Two-Factor Authentication (2FA) has been supported by ASP.NET Core since its 1.0 release, which 
+implemented it using SMS verification (SMS 2FA); however, starting with ASP.NET Core 2, the SMS 2FA 
+approach was deprecated in favor of a Time-Based One-Time Password (TOTP) algorithm, which became 
+the industry-recommended approach to implement 2FA in web applications.
+
+------------------------------------------------
+
+dotnet new angular -o AuthSample -au Individual
+npm update
+npm install
+npm cache verify
+
+------------------------------------------------
+
+------------------------------------------------
+------------------------------------------------
+
+------------------------------------------------
+------------------------------------------------
+
+------------------------------------------------
+------------------------------------------------
+
+------------------------------------------------
+------------------------------------------------
+
+------------------------------------------------
+------------------------------------------------
+
+------------------------------------------------
+------------------------------------------------
+
+------------------------------------------------
+------------------------------------------------
+
+------------------------------------------------
+------------------------------------------------
+
+------------------------------------------------
+------------------------------------------------
