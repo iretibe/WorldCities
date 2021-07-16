@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AngularMaterialModule } from './angular-material.module';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -15,6 +15,8 @@ import { CountriesComponent } from './countries/countries.component';
 import { CountryEditComponent } from './countries/country-edit.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CityService } from './cities/city.service';
+import { AuthorizeInterceptor } from '../api-authorization/authorize.interceptor';
+import { ApiAuthorizationModule } from '../api-authorization/api-authorization.module';
 
 @NgModule({
   declarations: [
@@ -30,12 +32,23 @@ import { CityService } from './cities/city.service';
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
+    ApiAuthorizationModule,
     AppRoutingModule,
     BrowserAnimationsModule,
     AngularMaterialModule,
     ReactiveFormsModule
   ],
-  providers: [CityService],
+  providers:
+    [
+      {
+        provide: HTTP_INTERCEPTORS,
+        useClass: AuthorizeInterceptor,
+        multi: true
+      } //,
+      //CityService
+    ],
+
   bootstrap: [AppComponent]
 })
+
 export class AppModule { }

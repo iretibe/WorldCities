@@ -514,8 +514,65 @@ npm cache verify
 
 ------------------------------------------------
 
+Route guards are a mechanism to properly enforce such a requirement; they can be added to our route 
+configuration to return values that can control the router's behavior in the following way:
+    1- If a route guard returns true, the navigation process continues
+    2- If it returns false, the navigation process stops
+    3- If it returns a UrlTree, the navigation process is canceled and replaced by a new navigation 
+        to the given UrlTree
+
+Available guards
+The following route guards are currently available in Angular:
+    1- CanActivate: Mediates navigation to a given route
+    2- CanActivateChild: Mediates navigation to a given child route
+    3- CanDeactivate: Mediates navigation away from the current route
+    4- Resolve: Performs some arbitrary operations (such as custom data retrieval tasks) before 
+        activating the route
+    5- CanLoad: Mediates navigation to a given asynchronous module
+
+Each one of them is available through a superclass that acts as a common interface: whenever we want 
+to create our own guard, we'll just have to extend the corresponding superclass and implement the relevant 
+method(s).
+
+Any route can be configured with multiple guards: CanDeactivate and CanActivateChild guards will be 
+checked first, from the deepest child route to the top; right after that, the router will check 
+CanActivate guards from the top down to the deepest child route. 
+Once done, CanLoad routes will be checked for asynchronous modules. If any of these guards returns false, 
+the navigation will be stopped and all pending guards will be canceled.
+
 ------------------------------------------------
+
+HttpInterceptor
+The Angular HttpInterceptor interface provides a standardized mechanism to intercept and/or 
+transform outgoing HTTP requests or incoming HTTP response
+
+Interceptors are a major feature of Angular since they can be used for a number of different tasks: 
+they can inspect and/or log our app's HTTP traffic, modify the requests, cache the responses, and so on; 
+they are a convenient way to centralize all these tasks so that we don't have to implement them explicitly 
+on our data services and/or within the various HttpClient-based method calls. Moreover, 
+they can also be chained, meaning that we can have multiple interceptors working together in a 
+forward-and-backward chain of request/response handlers.
+
+The AuthorizeInterceptor class shipped with the Angular authentication APIs.
+
+As we can see, AuthorizeInterceptor implements the HttpInterceptor interface by defining an intercept 
+method. That method's job is to intercept all the outgoing HTTP requests and conditionally add the 
+JWT Bearer token to their HTTP headers; this condition is determined by the isSameOriginUrl() internal 
+method, which will return true only if the request is addressed to an URL with the same origin as the 
+Angular app.
+
+Just like any other Angular class, the AuthorizeInterceptor needs to be properly configured within an 
+NgModule in order to work; since it needs to inspect any HTTP request—including those not part of 
+the authorization API—it has been configured in the AppModule, the root-level NgModule, 
+of the AuthSample app.
+
+The multi: true property that we can see in the preceding code is a required setting, 
+because HTTP_INTERCEPTORS is a multi-provider token that is expecting to inject an array of 
+multiple values, rather than a single one.
+
 ------------------------------------------------
+
+
 
 ------------------------------------------------
 ------------------------------------------------

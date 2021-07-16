@@ -40,8 +40,11 @@ namespace AuthSample
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
+
             services.AddControllersWithViews();
+
             services.AddRazorPages();
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -65,7 +68,9 @@ namespace AuthSample
             }
 
             app.UseHttpsRedirection();
+
             app.UseStaticFiles();
+
             if (!env.IsDevelopment())
             {
                 app.UseSpaStaticFiles();
@@ -74,8 +79,11 @@ namespace AuthSample
             app.UseRouting();
 
             app.UseAuthentication();
+
             app.UseIdentityServer();
+
             app.UseAuthorization();
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

@@ -1,8 +1,11 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.MSSqlServer;
@@ -13,6 +16,9 @@ namespace WorldCities.Angular
     {
         public static void Main(string[] args)
         {
+            ////SendGrid implementation test
+            //Execute().Wait();
+
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json",
@@ -40,6 +46,20 @@ namespace WorldCities.Angular
                 .CreateLogger();
 
             CreateHostBuilder(args).UseSerilog().Build().Run();
+        }
+
+        //SendGrid implementation test
+        private async Task Execute()
+        {
+            var apiKey = "PUT-YOUR-API-KEY-HERE";
+            var client = new SendGridClient(apiKey);
+            var from = new EmailAddress("test@example.com", "Example User");
+            var subject = "Sending with SendGrid is Fun";
+            var to = new EmailAddress("test@example.com", "Example User");
+            var plainTextContent = "and easy to do anywhere, even with C#";
+            var htmlContent = "<strong>and easy to do anywhere, even with C#</strong>";
+            var msg = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, htmlContent);
+            var response = await client.SendEmailAsync(msg);
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
