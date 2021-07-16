@@ -572,7 +572,10 @@ multiple values, rather than a single one.
 
 ------------------------------------------------
 
-
+A PWA is a web application that uses a modern web browser's capabilities to deliver an 
+app-like experience to users. To achieve this, the PWA needs to meet some technical requirements, 
+including (yet not limited to) a Web App Manifest file and a service worker to allow it to work in 
+offline mode and behave just like a mobile app.
 
 ------------------------------------------------
 ------------------------------------------------

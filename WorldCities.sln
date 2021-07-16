@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorldCities.Tests", "WorldC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorldCities.Angular", "WorldCities.Angular\WorldCities.Angular.csproj", "{FDC7C81B-CCC4-46F3-89CC-A715C812DE0C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AuthSample", "AuthSample\AuthSample.csproj", "{1F0E6D90-7A1B-4AE0-80FC-6DAEC12B8513}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,10 +21,6 @@ Global
 		{FDC7C81B-CCC4-46F3-89CC-A715C812DE0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FDC7C81B-CCC4-46F3-89CC-A715C812DE0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FDC7C81B-CCC4-46F3-89CC-A715C812DE0C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1F0E6D90-7A1B-4AE0-80FC-6DAEC12B8513}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1F0E6D90-7A1B-4AE0-80FC-6DAEC12B8513}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1F0E6D90-7A1B-4AE0-80FC-6DAEC12B8513}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1F0E6D90-7A1B-4AE0-80FC-6DAEC12B8513}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
